@@ -1,5 +1,5 @@
 warn("loaded")
-warn("updated for halloween 2026")
+warn("update: added halloweenmaps")
 warn("RARELY wont vote")
 local players = game:GetService("Players")
 local localplayer = players.LocalPlayer
@@ -10,11 +10,16 @@ local priority = {
     "House 2",
     "Bank 2",
     "Mansion 2",
+    "Manor",
+    "Vampire’s Castle",
     "Workplace",
     "Police Station",
     "Bio Lab",
     "Research Facility",
+    "Mineshaft",
     "Factory",
+    "Farmhouse",
+    "Spaceship",
     "Mil Base",
     "Hotel 2",
 }
