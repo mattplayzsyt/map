@@ -6,6 +6,17 @@ local last_coin;
 local players = game:GetService("Players");
 local localplayer = players.LocalPlayer;
 
+local camera = workspace.CurrentCamera;
+local screen_size = camera.ViewportSize;
+
+function draw(type)
+    local new_draw = Drawing.new(type);
+    new_draw.Transparency = 1;
+    new_draw.Visible = true;
+
+    return new_draw;
+end;
+
 function is_valid(obj)
     return obj and obj.Parent ~= nil;
 end;
@@ -59,7 +70,7 @@ function tween_position(object, target, duration)
         local alpha = (os.clock() - start_time) / duration;
         if alpha > 1 then alpha = 1 end;
 
-        local tx, ty, tz = target.Position.X, target.Position.Y + 0.2, target.Position.Z;
+        local tx, ty, tz = target.Position.X, target.Position.Y, target.Position.Z;
         local sx, sy, sz = start_pos.X, start_pos.Y, start_pos.Z;
 
         object.Position = Vector3.new(
@@ -71,7 +82,7 @@ function tween_position(object, target, duration)
     end;
 
     can_tween = true;
-    object.Position = target.Position + Vector3.new(0, 0.2, 0);
+    object.Position = target.Position;
 end;
 
 function set_noclip()
@@ -85,7 +96,13 @@ function set_noclip()
     end;
 end;
 
+local status = draw("Text");
+status.Center = true;
+
 function update_auto_farm()
+    screen_size = camera.ViewportSize;
+    status.Position = Vector2.new(screen_size.X / 2, screen_size.X * 0.2);
+
     for _, v in next, workspace:GetChildren() do
         if v:FindFirstChild("Spawns") and v.Name ~= "Lobby" then
             map = v;
@@ -102,12 +119,13 @@ function update_auto_farm()
     if character then
         local humanoidrootpart = character:FindFirstChild("HumanoidRootPart");
         if humanoidrootpart then
-            if (is_valid(map)) and coins and coins.Text ~= "50" then
+            if (is_valid(map)) and coins.Text ~= "50" then
                 local closest_coin, coin_distance = get_closest_coin();
 
                 if is_valid(closest_coin) then
                     last_coin = closest_coin;
                     humanoidrootpart.Velocity = Vector3.new(0, 0, 0);
+                    status.Text = "Auto Farming Status: Currently " .. coins.Text .. " Coins";
 
                     if (can_tween) then
                         spawn(function() 
@@ -116,9 +134,20 @@ function update_auto_farm()
                     end;
                 end;
             else
+                if (coins.Text == "50") then
+                    status.Text = "Auto Farm Status: Coin Full";
+                else
+                    status.Text = "Auto Farm Status: IDLE";
+                end;
+
                 humanoidrootpart.Velocity = Vector3.new(0, 0, 0);
+                -- tween_position(humanoidrootpart, game.Workspace.Lobby.Map.zombieking.HumanoidRootPart, tween_duration);
             end;
+        else
+            status.Text = "Auto Farm Status: Can't find RootPart";
         end;
+    else
+        status.Text = "Auto Farm Status: Can't find Character";
     end;
 end;
 
