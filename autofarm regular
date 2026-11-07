@@ -59,7 +59,7 @@ function tween_position(object, target, duration)
         local alpha = (os.clock() - start_time) / duration;
         if alpha > 1 then alpha = 1 end;
 
-        local tx, ty, tz = target.Position.X, target.Position.Y, target.Position.Z;
+        local tx, ty, tz = target.Position.X, target.Position.Y + 0.2, target.Position.Z;
         local sx, sy, sz = start_pos.X, start_pos.Y, start_pos.Z;
 
         object.Position = Vector3.new(
@@ -71,7 +71,7 @@ function tween_position(object, target, duration)
     end;
 
     can_tween = true;
-    object.Position = target.Position;
+    object.Position = target.Position + Vector3.new(0, 0.2, 0);
 end;
 
 function set_noclip()
@@ -102,7 +102,7 @@ function update_auto_farm()
     if character then
         local humanoidrootpart = character:FindFirstChild("HumanoidRootPart");
         if humanoidrootpart then
-            if (is_valid(map)) and coins and coins.Text ~= "40" then
+            if (is_valid(map)) and coins and coins.Text ~= "50" then
                 local closest_coin, coin_distance = get_closest_coin();
 
                 if is_valid(closest_coin) then
