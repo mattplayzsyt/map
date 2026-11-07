@@ -1,3 +1,4 @@
+warn("157")
 -- [[ CODE ]] --
 local map;
 local coins;
