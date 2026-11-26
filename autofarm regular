@@ -44,7 +44,7 @@ function get_closest_coin()
     if not coin_container then return nil, closest_distance end; 
 
     for _, coin in next, coin_container:GetChildren() do
-        if is_valid(coin) and coin:FindFirstChild("TouchInterest") and coin:FindFirstChild("CoinVisual") then
+        if coin ~= last_coin and is_valid(coin) and coin:FindFirstChild("TouchInterest") and coin:FindFirstChild("CoinVisual") then
             local coin_distance = magnitude(coin.Position, humanoidrootpart.Position);
             if coin_distance < closest_distance then
                 closest_coin = coin;
@@ -132,7 +132,7 @@ function update_auto_farm()
 
                     if (can_tween) then
                         spawn(function() 
-                            tween_position(humanoidrootpart, closest_coin, coin_distance / tween_speed); 
+                            tween_position(humanoidrootpart, closest_coin, coin_distance / _G.tween_speed); 
                         end);
                     end;
                 end;
