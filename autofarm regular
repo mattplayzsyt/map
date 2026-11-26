@@ -1,5 +1,3 @@
-warn("started 2")
-_G.tween_speed = 26;
 -- [[ CODE ]] --
 local map;
 local coins;
