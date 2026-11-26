@@ -16,6 +16,12 @@ function draw(type)
     new_draw.Transparency = 1;
     new_draw.Visible = true;
 
+    if type == "Text" then
+        new_draw.Size = 15;
+        new_draw.Color = Color3.fromRGB(255, 255, 255);
+        new_draw.Outline = false;
+    end;
+
     return new_draw;
 end;
 
@@ -102,9 +108,53 @@ end;
 local status = draw("Text");
 status.Center = true;
 
+-- [[ STATS ]] --
+local start_time = os.clock();
+local total_coins = 0;
+local last_count = 0;
+
+local time_label = draw("Text");
+time_label.Center = true;
+
+local rate_label = draw("Text");
+rate_label.Center = true;
+
+function format_time(seconds)
+    local h = math.floor(seconds / 3600);
+    local m = math.floor((seconds % 3600) / 60);
+    local s = math.floor(seconds % 60);
+    return string.format("%02d:%02d:%02d", h, m, s);
+end;
+
+function update_stats()
+    local elapsed = os.clock() - start_time;
+
+    local current = 0;
+    if coins then
+        current = tonumber((coins.Text:gsub("%D", ""))) or 0;
+    end;
+
+    -- only count increases; a drop means the bag reset for a new round
+    if current > last_count then
+        total_coins = total_coins + (current - last_count);
+    end;
+    last_count = current;
+
+    local hourly_rate = 0;
+    if elapsed > 0 then
+        hourly_rate = (total_coins / elapsed) * 3600;
+    end;
+
+    time_label.Text = "Time: " .. format_time(elapsed);
+    rate_label.Text = "Hourly Rate: " .. math.floor(hourly_rate) .. " (" .. total_coins .. " total)";
+end;
+
 function update_auto_farm()
     screen_size = camera.ViewportSize;
-    status.Position = Vector2.new(screen_size.X / 2, screen_size.X * 0.2);
+    local base_y = screen_size.Y * 0.2;
+    status.Position = Vector2.new(screen_size.X / 2, base_y);
+    time_label.Position = Vector2.new(screen_size.X / 2, base_y + 20);
+    rate_label.Position = Vector2.new(screen_size.X / 2, base_y + 40);
 
     for _, v in next, workspace:GetChildren() do
         if v:FindFirstChild("Spawns") and v.Name ~= "Lobby" then
@@ -115,8 +165,10 @@ function update_auto_farm()
     set_noclip();
 
     pcall(function() 
-        coins = localplayer.PlayerGui.MainGUI.Game.CoinBags.Container.Candy.CurrencyFrame.Icon.Coins
+        coins = localplayer.PlayerGui.MainGUI.Game.CoinBags.Container.Coin.CurrencyFrame.Icon.Coins
     end);
+
+    update_stats();
 
     local character = localplayer.Character;
     if character then
