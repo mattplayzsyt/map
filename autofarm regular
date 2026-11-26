@@ -1,3 +1,5 @@
+warn("started 2")
+_G.tween_speed = 26;
 -- [[ CODE ]] --
 local map;
 local coins;
@@ -8,6 +10,8 @@ local localplayer = players.LocalPlayer;
 
 local camera = workspace.CurrentCamera;
 local screen_size = camera.ViewportSize;
+
+local height_offset = Vector3.new(0, 2, 0);
 
 function draw(type)
     local new_draw = Drawing.new(type);
@@ -70,7 +74,8 @@ function tween_position(object, target, duration)
         local alpha = (os.clock() - start_time) / duration;
         if alpha > 1 then alpha = 1 end;
 
-        local tx, ty, tz = target.Position.X, target.Position.Y, target.Position.Z;
+        local target_pos = target.Position + height_offset;
+        local tx, ty, tz = target_pos.X, target_pos.Y, target_pos.Z;
         local sx, sy, sz = start_pos.X, start_pos.Y, start_pos.Z;
 
         object.Position = Vector3.new(
@@ -82,7 +87,7 @@ function tween_position(object, target, duration)
     end;
 
     can_tween = true;
-    object.Position = target.Position;
+    object.Position = target.Position + height_offset;
 end;
 
 function set_noclip()
